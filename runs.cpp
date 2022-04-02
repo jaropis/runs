@@ -10,7 +10,40 @@ RRRuns::RRRuns(string path)
 }
 
 vector<int> RRRuns::get_runs()
-{   vector<int> v{3, 4, 5};
-    cout << "runs results" << endl;
-    return v;
+{   
+    bool flag_dec = true;
+    bool flag_acc = true;
+    vector<int> runs;
+    vector<int> runs_addresses;
+    vector<int> accumulator;
+    int run_counter = 0;
+    for (int i=1; i <= rr_data.size(); i++) 
+    {   
+        if (rr_data[i] < rr_data[i-1])
+        {
+            cout << rr_data[i] << endl; 
+            if (flag_dec) {
+                flag_dec = false;
+                // accumulator[run_counter] += 1;
+                flag_acc = true;
+                runs_addresses.push_back(i);
+                runs.push_back(run_counter);
+                run_counter = 0;
+            }
+
+            if (flag_acc) {
+                flag_acc = false;
+                // accumulator[run_counter] += 1;
+                flag_acc = true;
+                runs_addresses.push_back(i);
+                runs.push_back(run_counter);
+                run_counter = 0;
+            }
+        }
+    }
+    for (int j = 0; j < runs.size(); j++) 
+    {
+        cout << runs[j] << endl;
+    }
+    return runs;
 }
