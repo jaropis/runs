@@ -1,24 +1,15 @@
-#include <cassert>
+#include "runs.h"
 #include <iostream>
-#include <fstream>
-int main(void)
+using namespace std;
+
+RRRuns::RRRuns(string path)
 {
-    int RR_length = 1943;
-    int runs_length = 300;
+    this->rr_data = { 858.125, 875.625, 833.125, 821.25, 803.75, 798.75, 773.125, 721.875, 730, 816.875, 871.25, 858.125, 839.375, 877.5, 901.875, 885.625, 869.375, 802.5, 760.625, 794.375, 830, 828.75, 774.375, 720, 708.75, 780.625, 743.75, 721.25, 782.5, 849.375, 865};
+    this->annotations = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+}
 
-    double RR[2][RR_length];
-    std::ifstream read_file("RR.csv");
-    assert(read_file.is_open());
-    for (int i = 0; i < RR_length; i++)
-    {
-        std::cout << read_file;
-        /* read_file >>
-            RR[1][i] >> RR[2][i]; */
-    }
-    read_file.close();
-
-    /* for (int i = 0; i < 100; i++)
-    {
-        std::cout << RR[1][i] << " " << RR[2][i] << std::endl;
-    } */
+vector<int> RRRuns::get_runs()
+{   vector<int> v{3, 4, 5};
+    cout << "runs results" << endl;
+    return v;
 }
