@@ -17,6 +17,7 @@ vector<int> RRRuns::get_runs()
     vector<int> runs_addresses;
     vector<int> accumulator;
     int run_counter = 0;
+    
     for (int i=1; i <= rr_data.size(); i++) 
     {   
         if (rr_data[i] < rr_data[i-1])
