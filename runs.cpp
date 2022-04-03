@@ -11,35 +11,30 @@ RRRuns::RRRuns(string path)
 
 vector<int> RRRuns::get_runs()
 {   
+    int runs_addresses_dec [rr_data.size()][3]; //this holds addresses of decelerations - the first row contains the address of the beginning, the second the length of the run, and the third the type of run (-1 is acc, 0 is neutral, 1 is dec)
+    int accumulator_dec [100]; // accumulates statistics for acceleration runs
+    int accumulator_acc [100]; // accumulates statistics for deceleration runs
     bool flag_dec = true;
     bool flag_acc = true;
-    vector<int> runs;
-    vector<int> runs_addresses;
-    vector<int> accumulator;
+    int index_dec;
+    int index_acc;
     int run_counter = 0;
+    int running_rr_number = 0;
     
     for (int i=1; i <= rr_data.size(); i++) 
     {   
-        if (rr_data[i] < rr_data[i-1])
+       if(flag_dec && rr_data[i-1] < rr_data[i]) 
+       {
+           index_dec++;
+       }
+       if(flag_dec && rr_data[i-1] > rr_data[i])
+       {
+           index_acc++;
+       }
+        if(accumulator_dec && rr_data[i-1] >= rr_data[i])
         {
-            cout << rr_data[i] << endl; 
-            if (flag_dec) {
-                flag_dec = false;
-                // accumulator[run_counter] += 1;
-                flag_acc = true;
-                runs_addresses.push_back(i);
-                runs.push_back(run_counter);
-                run_counter = 0;
-            }
+            accumulator_dec[index_dec] += 1
 
-            if (flag_acc) {
-                flag_acc = false;
-                // accumulator[run_counter] += 1;
-                flag_acc = true;
-                runs_addresses.push_back(i);
-                runs.push_back(run_counter);
-                run_counter = 0;
-            }
         }
     }
     for (int j = 0; j < runs.size(); j++) 
