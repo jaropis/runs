@@ -11,4 +11,5 @@ class RRRuns {
     private:
         vector<double> rr_data;
         vector<int> annotations;
+
 };
