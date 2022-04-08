@@ -43,7 +43,21 @@ vector<int> RRRuns::get_runs()
     int accumulator_dec [rr_data.size()]; // accumulates statistics for acceleration runs
     int accumulator_acc [rr_data.size()]; // accumulates statistics for deceleration runs
     int accumulator_neu [rr_data.size()]; // accumulates statistics for deceleration runs
-    cout << "data size: " << rr_data.size() << endl;
+
+    // initializing the flags
+    if (rr_data[0] < rr_data[1]) 
+    {
+        flag_dec = true;
+    }
+    if (rr_data[0] > rr_data[1]) 
+    {
+        flag_acc = true;
+    }
+    if (rr_data[0] == rr_data[1])
+    {
+        flag_neu = true;
+    }
+    // starting from the second RR interval
     for (int i=1; i < rr_data.size(); i++) 
     {  
        if(flag_dec && rr_data[i-1] < rr_data[i]) 
@@ -52,64 +66,116 @@ vector<int> RRRuns::get_runs()
            flag_dec = true;
        }
        
-       if(flag_acc && rr_data[i-1] > rr_data[i])
-       {
-           index_acc++;
-           flag_acc = true;
-       }
-       if(flag_neu && rr_data[i-1] == rr_data[i])
-       {
-           index_acc++;
-           flag_neu = true;
-       }
-        if(flag_dec && rr_data[i-1] > rr_data[i])
+        if(rr_data[i-1] < rr_data[i])
         {   
-            accumulator_dec[index_dec] += 1;
-            runs_addresses[current_address][0] = running_rr_number;
-            runs_addresses[current_address][1] = index_dec;
-            runs_addresses[current_address][2] = 1;
-            current_address++;
-            running_rr_number++;
-            index_dec = 0;     
-            flag_dec = false;
-            flag_acc = true;               
-        }
-        if(flag_acc && rr_data[i-1] < rr_data[i])
-        {
-            accumulator_acc[index_acc] += 1;
-            runs_addresses[current_address][0] = running_rr_number;
-            runs_addresses[current_address][1] = index_acc;
-            runs_addresses[current_address][2] = -1;
-            current_address++;
-            running_rr_number++;
-            flag_acc = false;
-            flag_dec = true;
-        }
-        if(flag_neu && rr_data[i-1] != rr_data[i])
-        {
-            accumulator_neu[index_neu] += 1;
-            runs_addresses[current_address][0] = running_rr_number;
-            runs_addresses[current_address][1] = index_neu;         
-            runs_addresses[current_address][2] = 0;         
-            current_address++;
-            running_rr_number++;
-            index_neu = 0;
-            flag_neu = false;
-            if (rr_data[i-1] > rr_data[i]) {
-                flag_acc = true;
+            if (flag_dec) {
+                index_dec++;
+                running_rr_number++;
             } else {
-                flag_dec = true;
+                if (flag_acc) 
+                {
+                    accumulator_acc[index_acc] += 1;
+                    runs_addresses[current_address][0] = running_rr_number;
+                    runs_addresses[current_address][1] = index_acc;
+                    runs_addresses[current_address][2] = -1;
+                    current_address++;
+                    running_rr_number++;
+                    index_acc = 0;
+                    flag_acc = false;
+                    flag_dec = true;
+                }
+                if (flag_neu) 
+                {
+                    accumulator_neu[index_neu] += 1;
+                    runs_addresses[current_address][0] = running_rr_number;
+                    runs_addresses[current_address][1] = index_neu;         
+                    runs_addresses[current_address][2] = 0;         
+                    current_address++;
+                    running_rr_number++;
+                    index_neu = 0;
+                    flag_neu = false;
+                    flag_acc = true;
+                }
+            }              
+        }
+        if(rr_data[i-1] > rr_data[i]) {
+        {   
+            if (flag_acc)
+            {
+                index_acc++;
+                running_rr_number++;
+            } else {
+                if (flag_dec) 
+                {
+                    accumulator_dec[index_dec] += 1;
+                    runs_addresses[current_address][0] = running_rr_number;
+                    runs_addresses[current_address][1] = index_dec;
+                    runs_addresses[current_address][2] = 1;
+                    current_address++;
+                    running_rr_number++;
+                    index_dec = 0;     
+                    flag_dec = false;
+                    flag_acc = true; 
+                }
+                if (flag_neu)
+                {
+                    accumulator_neu[index_neu] += 1;
+                    runs_addresses[current_address][0] = running_rr_number;
+                    runs_addresses[current_address][1] = index_neu;         
+                    runs_addresses[current_address][2] = 0;         
+                    current_address++;
+                    running_rr_number++;
+                    index_neu = 0;
+                    flag_neu = false;
+                    flag_acc = true;
+                }
             }
+        }
+        }
+        if(rr_data[i-1] == rr_data[i])
+        {
+            if (flag_neu) 
+            {   
+                index_neu++;
+                running_rr_number++;
+            } else {
+                if (flag_dec) 
+                {
+                    accumulator_dec[index_dec] += 1;
+                    runs_addresses[current_address][0] = running_rr_number;
+                    runs_addresses[current_address][1] = index_dec;
+                    runs_addresses[current_address][2] = 1;
+                    current_address++;
+                    running_rr_number++;
+                    index_dec = 0;     
+                    flag_dec = false;
+                    flag_acc = true; 
+                }
+                if (flag_acc) 
+                {   
+                    accumulator_acc[index_acc] += 1;
+                    runs_addresses[current_address][0] = running_rr_number;
+                    runs_addresses[current_address][1] = index_acc;
+                    runs_addresses[current_address][2] = -1;
+                    current_address++;
+                    running_rr_number++;
+                    index_acc = 0;
+                    flag_acc = false;
+                    flag_dec = true;
+                }
+            }
+            
         }
     }
     cout << "kulku!" << endl;
     for (int j = 0; j < current_address; j++) 
-    {
-        cout << j << endl;
-        
+    {   
         cout << " " << runs_addresses[j][0] 
              << " " << runs_addresses[j][1]
              << " " << runs_addresses[j][2] << endl;
     } 
+    /*for (int elem : accumulator_acc) {
+        cout << elem << endl;
+    }*/
     return runs;
 }
