@@ -6,5 +6,5 @@
 int main(void)
 {
     RRRuns RR("RR.csv");
-    // RR.get_runs();
+    RR.get_runs();
 }
