@@ -1,4 +1,4 @@
-#include "runs.h"
+#include "Runs.h"
 #include <iostream>
 #include <fstream>
 
@@ -48,28 +48,26 @@ vector<int> RRRuns::get_runs()
     if (rr_data[0] < rr_data[1]) 
     {
         flag_dec = true;
+        index_dec++;
     }
     if (rr_data[0] > rr_data[1]) 
-    {
+    {cout << "przyspieszenie przed" << endl;
+    cout << rr_data[0] << " " << rr_data[1] << endl;
         flag_acc = true;
+        index_acc++;
     }
     if (rr_data[0] == rr_data[1])
     {
         flag_neu = true;
+        index_neu++;
     }
     // starting from the second RR interval
-    for (int i=1; i < rr_data.size(); i++) 
+    for (int i=2; i < rr_data.size(); i++) 
     {  
-       if(flag_dec && rr_data[i-1] < rr_data[i]) 
-       {
-           index_dec++;
-           flag_dec = true;
-       }
-       
         if(rr_data[i-1] < rr_data[i])
         {   
+            index_dec++;
             if (flag_dec) {
-                index_dec++;
                 running_rr_number++;
             } else {
                 if (flag_acc) 
@@ -100,9 +98,9 @@ vector<int> RRRuns::get_runs()
         }
         if(rr_data[i-1] > rr_data[i]) {
         {   
+            index_acc++;
             if (flag_acc)
             {
-                index_acc++;
                 running_rr_number++;
             } else {
                 if (flag_dec) 
@@ -134,13 +132,14 @@ vector<int> RRRuns::get_runs()
         }
         if(rr_data[i-1] == rr_data[i])
         {
+            index_neu++;
             if (flag_neu) 
             {   
-                index_neu++;
                 running_rr_number++;
             } else {
                 if (flag_dec) 
                 {
+                    
                     accumulator_dec[index_dec] += 1;
                     runs_addresses[current_address][0] = running_rr_number;
                     runs_addresses[current_address][1] = index_dec;
@@ -167,7 +166,8 @@ vector<int> RRRuns::get_runs()
             
         }
     }
-    cout << "kulku!" << endl;
+
+    // writing the last run
     for (int j = 0; j < current_address; j++) 
     {   
         cout << " " << runs_addresses[j][0] 
