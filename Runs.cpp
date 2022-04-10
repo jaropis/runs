@@ -4,12 +4,13 @@
 
 using namespace std;
 
-RRRuns::RRRuns(string path)
+RRRuns::RRRuns(string path, bool write_last_run)
 {
     ifstream rrfile;
     rrfile.open(path);
     double current_rr;
     int current_flag;
+    this->write_last_run = write_last_run;
     while(!rrfile.eof()) 
     {
         rrfile >> current_rr;
@@ -168,6 +169,28 @@ vector<int> RRRuns::get_runs()
     }
 
     // writing the last run
+    if (this->write_last_run) {
+        if (index_acc > 0) {
+            accumulator_acc[index_acc] += 1;
+            runs_addresses[current_address][0] = running_rr_number;
+            runs_addresses[current_address][1] = index_acc;
+            runs_addresses[current_address][2] = -1;
+        }
+        if (index_dec > 0) {
+            accumulator_dec[index_dec] += 1;
+            runs_addresses[current_address][0] = running_rr_number;
+            runs_addresses[current_address][1] = index_dec;
+            runs_addresses[current_address][2] = 1;
+        }
+        if (index_neu > 0) {
+            accumulator_neu[index_neu] += 1;
+            runs_addresses[current_address][0] = running_rr_number;
+            runs_addresses[current_address][1] = index_neu;         
+            runs_addresses[current_address][2] = 0;
+        }
+    } else {
+        cout << "nie trza ostatniego runa" << endl;
+    }
     for (int j = 0; j < current_address; j++) 
     {   
         cout << " " << runs_addresses[j][0] 
