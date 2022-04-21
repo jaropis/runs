@@ -52,8 +52,7 @@ vector<int> RRRuns::get_runs()
         index_dec++;
     }
     if (rr_data[0] > rr_data[1]) 
-    {cout << "przyspieszenie przed" << endl;
-    cout << rr_data[0] << " " << rr_data[1] << endl;
+    {
         flag_acc = true;
         index_acc++;
     }
@@ -189,9 +188,9 @@ vector<int> RRRuns::get_runs()
             runs_addresses[current_address][2] = 0;
         }
     } else {
-        cout << "nie trza ostatniego runa" << endl;
+        cout << "the last run not needed" << endl;
     }
-    for (int j = 0; j < current_address; j++) 
+    for (int j = 0; j <= current_address; j++) 
     {   
         cout << " " << runs_addresses[j][0] 
              << " " << runs_addresses[j][1]
