@@ -196,6 +196,8 @@ vector<int> RRRuns::get_runs()
              << " " << runs_addresses[j][1]
              << " " << runs_addresses[j][2] << endl;
     } 
+    cout << "lacznie mamy: " << current_address << "serii" << endl;
+    cout << "dlugosc szeregu to: " << rr_data.size() << endl;
     /*for (int elem : accumulator_acc) {
         cout << elem << endl;
     }*/

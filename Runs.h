@@ -12,5 +12,4 @@ class RRRuns {
         vector<double> rr_data;
         vector<int> annotations;
         bool write_last_run;
-
 };
