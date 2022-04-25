@@ -39,31 +39,73 @@ vector<int> RRRuns::get_runs()
     int index_acc = 0;
     int index_neu = 0;
     int run_counter = 0;
-    int running_rr_number = 0;
+    int running_rr_number = 1;
     int current_address = 0; // holds the address in runs_addresses array, adds consecutive runs
     int accumulator_dec [rr_data.size()]; // accumulates statistics for acceleration runs
     int accumulator_acc [rr_data.size()]; // accumulates statistics for deceleration runs
     int accumulator_neu [rr_data.size()]; // accumulates statistics for deceleration runs
 
+    // rewind to the first good flag
+    while (annotations[running_rr_number - 1] != 0) {
+        cout << "przejechalim" << endl;
+        running_rr_number++;
+    }
+    running_rr_number++; // so that the initialization below can use -1
     // initializing the flags
-    if (rr_data[0] < rr_data[1]) 
+    if (rr_data[running_rr_number - 1] < rr_data[running_rr_number]) 
     {
         flag_dec = true;
         index_dec++;
     }
-    if (rr_data[0] > rr_data[1]) 
+    if (rr_data[running_rr_number - 1] > rr_data[running_rr_number]) 
     {
         flag_acc = true;
         index_acc++;
     }
-    if (rr_data[0] == rr_data[1])
+    if (rr_data[running_rr_number - 1] == rr_data[running_rr_number])
     {
         flag_neu = true;
         index_neu++;
     }
+
+    // TUTU!!! start thinking here!!! do we need the +2?
+    running_rr_number += 2;
     // starting from the second RR interval
-    for (int i=2; i < rr_data.size(); i++) 
+    running_rr_number += 1;
+    for (int i=running_rr_number; i < rr_data.size(); i++) 
     {  
+        // update running_rr_number (we start from +2 above)
+
+        // what happens if annotation is not 0? We reset the flags and re-initiate the calculations
+        if (annotations[i-1] != 0) {
+            index_dec = 0;
+            index_acc = 0;
+            index_neu = 0;
+            // rewind to the first good rr_(n-1)
+            while (annotations[running_rr_number - 1] != 0) {
+                cout << "przejechalim" << endl;
+                running_rr_number++;
+                i++;
+            }
+            // reinitializing the flags
+            if (rr_data[running_rr_number - 1] < rr_data[running_rr_number]) 
+            {
+                flag_dec = true;
+                index_dec++;
+            }
+            if (rr_data[running_rr_number - 1] > rr_data[running_rr_number]) 
+            {
+                flag_acc = true;
+                index_acc++;
+            }
+            if (rr_data[running_rr_number - 1] == rr_data[running_rr_number])
+            {
+                flag_neu = true;
+                index_neu++;
+            }   
+            continue; // and leave the main loop
+        }
+
         if(rr_data[i-1] < rr_data[i])
         {   
             index_dec++;
@@ -92,7 +134,7 @@ vector<int> RRRuns::get_runs()
                     running_rr_number++;
                     index_neu = 0;
                     flag_neu = false;
-                    flag_acc = true;
+                    flag_dec = true;
                 }
             }              
         }
@@ -148,7 +190,7 @@ vector<int> RRRuns::get_runs()
                     running_rr_number++;
                     index_dec = 0;     
                     flag_dec = false;
-                    flag_acc = true; 
+                    flag_neu = true; 
                 }
                 if (flag_acc) 
                 {   
@@ -160,7 +202,7 @@ vector<int> RRRuns::get_runs()
                     running_rr_number++;
                     index_acc = 0;
                     flag_acc = false;
-                    flag_dec = true;
+                    flag_neu = true;
                 }
             }
             
@@ -196,8 +238,9 @@ vector<int> RRRuns::get_runs()
              << " " << runs_addresses[j][1]
              << " " << runs_addresses[j][2] << endl;
     } 
-    cout << "lacznie mamy: " << current_address << "serii" << endl;
+    cout << "lacznie mamy: " << current_address << " serii" << endl;
     cout << "dlugosc szeregu to: " << rr_data.size() << endl;
+    cout << "running_rr_number wyszedl: " << running_rr_number << endl;
     /*for (int elem : accumulator_acc) {
         cout << elem << endl;
     }*/
