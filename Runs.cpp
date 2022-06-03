@@ -28,10 +28,20 @@ RRRuns::RRRuns(string path, bool write_last_run)
     }
 }
 
+void RRRuns::print_addresses(int runs_addresses[][3], int how_many, int max_length) 
+{
+    how_many = (how_many > max_length)? max_length : how_many;
+    for (int j = 0; j < how_many; j++) 
+    {
+        cout << "dla j: " << j << endl;
+        cout << runs_addresses[j][0] << " " << runs_addresses[j][1] << " " << runs_addresses[j][2] << endl;
+    }
+}
+
 vector<int> RRRuns::get_runs()
 {   
     vector<int> runs;
-    int runs_addresses [rr_data.size()][3]; //this holds addresses of decelerations - the first row contains the address of the beginning, the second the length of the run, and the third the type of run (-1 is acc, 0 is neutral, 1 is dec)
+    int runs_addresses [rr_data.size()][3]; //this holds addresses of decelerations - the first row contains the address of the end, the second the length of the run, and the third the type of run (-1 is acc, 0 is neutral, 1 is dec)
     bool flag_dec = false;
     bool flag_acc = false;
     bool flag_neu = false;
@@ -39,11 +49,11 @@ vector<int> RRRuns::get_runs()
     int index_acc = 0;
     int index_neu = 0;
     int run_counter = 0;
-    int running_rr_number = 1;
+    int running_rr_number = 0;
     int current_address = 0; // holds the address in runs_addresses array, adds consecutive runs
     int accumulator_dec [rr_data.size()]; // accumulates statistics for acceleration runs
     int accumulator_acc [rr_data.size()]; // accumulates statistics for deceleration runs
-    int accumulator_neu [rr_data.size()]; // accumulates statistics for deceleration runs
+    int accumulator_neu [rr_data.size()]; // accumulates statistics for neutral runs
 
     // rewind to the first good flag
     while (annotations[running_rr_number - 1] != 0) {
@@ -52,6 +62,8 @@ vector<int> RRRuns::get_runs()
     }
     running_rr_number++; // so that the initialization below can use -1
     // initializing the flags
+    cout << "pierwszy i drugi element: " << rr_data[running_rr_number - 1] << " " 
+                                         << rr_data[running_rr_number] << endl;
     if (rr_data[running_rr_number - 1] < rr_data[running_rr_number]) 
     {
         flag_dec = true;
@@ -68,10 +80,6 @@ vector<int> RRRuns::get_runs()
         index_neu++;
     }
 
-    // TUTU!!! start thinking here!!! do we need the +2?
-    running_rr_number += 2;
-    // starting from the second RR interval
-    running_rr_number += 1;
     for (int i=running_rr_number; i < rr_data.size(); i++) 
     {  
         // update running_rr_number (we start from +2 above)
@@ -232,12 +240,9 @@ vector<int> RRRuns::get_runs()
     } else {
         cout << "the last run not needed" << endl;
     }
-    for (int j = 0; j <= current_address; j++) 
-    {   
-        cout << " " << runs_addresses[j][0] 
-             << " " << runs_addresses[j][1]
-             << " " << runs_addresses[j][2] << endl;
-    } 
+
+    print_addresses(runs_addresses, 10, current_address);
+
     cout << "lacznie mamy: " << current_address << " serii" << endl;
     cout << "dlugosc szeregu to: " << rr_data.size() << endl;
     cout << "running_rr_number wyszedl: " << running_rr_number << endl;

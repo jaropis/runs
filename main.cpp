@@ -5,6 +5,6 @@
 #include "Runs.cpp"
 int main(void)
 {
-    RRRuns RR("adamek.csv", true);
+    RRRuns RR("RR_short.csv", true);
     RR.get_runs();
 }
