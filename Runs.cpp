@@ -10,7 +10,6 @@ RRRuns::RRRuns(string path, bool write_last_run)
     rrfile.open(path);
     double current_rr;
     int current_flag;
-    this->write_last_run = write_last_run;
     while(!rrfile.eof()) 
     {
         rrfile >> current_rr;
@@ -28,7 +27,7 @@ RRRuns::RRRuns(string path, bool write_last_run)
     }
 }
 
-void RRRuns::print_addresses(int runs_addresses[][3], int how_many, int max_length) 
+void RRRuns::print_addresses(int how_many, int max_length) 
 {
     how_many = (how_many > max_length)? max_length : how_many;
     for (int j = 0; j < how_many; j++) 
@@ -38,10 +37,14 @@ void RRRuns::print_addresses(int runs_addresses[][3], int how_many, int max_leng
     }
 }
 
+void RRRuns::update_runs_addresses(vector<int> new_entry) 
+{
+    this->runs_addresses.push_back(new_entry);
+}
+
 vector<int> RRRuns::get_runs()
 {   
     vector<int> runs;
-    int runs_addresses [rr_data.size()][3]; //this holds addresses of decelerations - the first row contains the address of the end, the second the length of the run, and the third the type of run (-1 is acc, 0 is neutral, 1 is dec)
     bool flag_dec = false;
     bool flag_acc = false;
     bool flag_neu = false;
@@ -123,9 +126,7 @@ vector<int> RRRuns::get_runs()
                 if (flag_acc) 
                 {
                     accumulator_acc[index_acc] += 1;
-                    runs_addresses[current_address][0] = running_rr_number;
-                    runs_addresses[current_address][1] = index_acc;
-                    runs_addresses[current_address][2] = -1;
+                    update_runs_addresses( { running_rr_number, index_acc, -1 });
                     current_address++;
                     running_rr_number++;
                     index_acc = 0;
@@ -135,9 +136,7 @@ vector<int> RRRuns::get_runs()
                 if (flag_neu) 
                 {
                     accumulator_neu[index_neu] += 1;
-                    runs_addresses[current_address][0] = running_rr_number;
-                    runs_addresses[current_address][1] = index_neu;         
-                    runs_addresses[current_address][2] = 0;         
+                    update_runs_addresses( { running_rr_number, index_neu, 0 });
                     current_address++;
                     running_rr_number++;
                     index_neu = 0;
@@ -156,9 +155,7 @@ vector<int> RRRuns::get_runs()
                 if (flag_dec) 
                 {
                     accumulator_dec[index_dec] += 1;
-                    runs_addresses[current_address][0] = running_rr_number;
-                    runs_addresses[current_address][1] = index_dec;
-                    runs_addresses[current_address][2] = 1;
+                    update_runs_addresses( { running_rr_number, index_dec, 1 });
                     current_address++;
                     running_rr_number++;
                     index_dec = 0;     
@@ -168,9 +165,7 @@ vector<int> RRRuns::get_runs()
                 if (flag_neu)
                 {
                     accumulator_neu[index_neu] += 1;
-                    runs_addresses[current_address][0] = running_rr_number;
-                    runs_addresses[current_address][1] = index_neu;         
-                    runs_addresses[current_address][2] = 0;         
+                    update_runs_addresses( { running_rr_number, index_neu, 0 });
                     current_address++;
                     running_rr_number++;
                     index_neu = 0;
@@ -191,9 +186,7 @@ vector<int> RRRuns::get_runs()
                 {
                     
                     accumulator_dec[index_dec] += 1;
-                    runs_addresses[current_address][0] = running_rr_number;
-                    runs_addresses[current_address][1] = index_dec;
-                    runs_addresses[current_address][2] = 1;
+                    update_runs_addresses( { running_rr_number, index_dec, 1 });
                     current_address++;
                     running_rr_number++;
                     index_dec = 0;     
@@ -203,9 +196,7 @@ vector<int> RRRuns::get_runs()
                 if (flag_acc) 
                 {   
                     accumulator_acc[index_acc] += 1;
-                    runs_addresses[current_address][0] = running_rr_number;
-                    runs_addresses[current_address][1] = index_acc;
-                    runs_addresses[current_address][2] = -1;
+                    update_runs_addresses( { running_rr_number, index_acc, -1 });
                     current_address++;
                     running_rr_number++;
                     index_acc = 0;
@@ -221,27 +212,21 @@ vector<int> RRRuns::get_runs()
     if (this->write_last_run) {
         if (index_acc > 0) {
             accumulator_acc[index_acc] += 1;
-            runs_addresses[current_address][0] = running_rr_number;
-            runs_addresses[current_address][1] = index_acc;
-            runs_addresses[current_address][2] = -1;
+            update_runs_addresses( { running_rr_number, index_acc, -1 });
         }
         if (index_dec > 0) {
             accumulator_dec[index_dec] += 1;
-            runs_addresses[current_address][0] = running_rr_number;
-            runs_addresses[current_address][1] = index_dec;
-            runs_addresses[current_address][2] = 1;
+            update_runs_addresses( { running_rr_number, index_dec, 1 });
         }
         if (index_neu > 0) {
             accumulator_neu[index_neu] += 1;
-            runs_addresses[current_address][0] = running_rr_number;
-            runs_addresses[current_address][1] = index_neu;         
-            runs_addresses[current_address][2] = 0;
+            update_runs_addresses( { running_rr_number, index_neu, 0 });
         }
     } else {
         cout << "the last run not needed" << endl;
     }
 
-    print_addresses(runs_addresses, 10, current_address);
+    print_addresses(10, current_address);
 
     cout << "lacznie mamy: " << current_address << " serii" << endl;
     cout << "dlugosc szeregu to: " << rr_data.size() << endl;
