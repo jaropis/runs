@@ -44,7 +44,6 @@ void RRRuns::update_runs_addresses(vector<int> new_entry)
 
 vector<int> RRRuns::get_runs()
 {   
-    vector<int> runs;
     bool flag_dec = false;
     bool flag_acc = false;
     bool flag_neu = false;
@@ -54,10 +53,9 @@ vector<int> RRRuns::get_runs()
     int run_counter = 0;
     int running_rr_number = 0;
     int current_address = 0; // holds the address in runs_addresses array, adds consecutive runs
-    int accumulator_dec [rr_data.size()]; // accumulates statistics for acceleration runs
-    int accumulator_acc [rr_data.size()]; // accumulates statistics for deceleration runs
-    int accumulator_neu [rr_data.size()]; // accumulates statistics for neutral runs
-
+    std::vector<int> accumulator_dec(rr_data.size(), 0); // accumulates statistics for acceleration runs
+    std::vector<int> accumulator_acc(rr_data.size(), 0); // accumulates statistics for deceleration runs
+    std::vector<int> accumulator_neu(rr_data.size(), 0); // accumulates statistics for neutral runs
     // rewind to the first good flag
     while (annotations[running_rr_number - 1] != 0) {
         cout << "przejechalim" << endl;
@@ -226,6 +224,9 @@ vector<int> RRRuns::get_runs()
         cout << "the last run not needed" << endl;
     }
 
+    full_runs["dec"] = accumulator_dec;
+    full_runs["acc"] = accumulator_acc;
+    full_runs["neu"] = accumulator_neu;
     print_addresses(10, current_address);
 
     cout << "lacznie mamy: " << current_address << " serii" << endl;
