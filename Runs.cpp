@@ -10,21 +10,12 @@ RRRuns::RRRuns(string path, bool write_last_run)
     rrfile.open(path);
     double current_rr;
     int current_flag;
-    while(!rrfile.eof()) 
+    while(rrfile >> current_rr >> current_flag) 
     {
-        rrfile >> current_rr;
-        rrfile >> current_flag;
         this->rr_data.push_back(current_rr);
         this->annotations.push_back(current_flag);
     }
-    // cout << "data size: " << rr_data.size();
-    for (int idx = 0; idx < rr_data.size(); idx++) 
-    {
-       /* cout << idx << " " 
-             << rr_data[idx] 
-             << " " <<annotations[idx] 
-             << endl; */
-    }
+    this->write_last_run = write_last_run;
 }
 
 void RRRuns::print_addresses(int how_many, int max_length) 
