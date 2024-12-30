@@ -8,6 +8,9 @@ RRRuns::RRRuns(string path, bool write_last_run)
 {
     ifstream rrfile;
     rrfile.open(path);
+    if (!rrfile.is_open()) {
+        cout << "Error opening file " << path;
+    };
     double current_rr;
     int current_flag;
     while(rrfile >> current_rr >> current_flag) 
