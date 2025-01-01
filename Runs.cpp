@@ -51,7 +51,7 @@ vector<int> RRRuns::get_runs()
     std::vector<int> accumulator_acc(rr_data.size(), 0); // accumulates statistics for deceleration runs
     std::vector<int> accumulator_neu(rr_data.size(), 0); // accumulates statistics for neutral runs
     // rewind to the first good flag
-    while (annotations[running_rr_number - 1] != 0) {
+    while (annotations[running_rr_number] != 0) {
         cout << "przejechalim" << endl;
         running_rr_number++;
     }
