@@ -6,5 +6,5 @@
 int main(void)
 {
     RRRuns RR("adamek.csv", true);
-    RR.get_runs();
+    RR.getFullRuns();
 }

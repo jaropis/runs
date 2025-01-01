@@ -37,7 +37,7 @@ void RRRuns::update_runs_addresses(vector<int> new_entry)
     this->runs_addresses.push_back(new_entry);
 }
 
-vector<int> RRRuns::get_runs()
+void RRRuns::analyzeRuns()
 {
     bool flag_dec = false;
     bool flag_acc = false;
@@ -52,15 +52,17 @@ vector<int> RRRuns::get_runs()
     std::vector<int> accumulator_acc(rr_data.size(), 0); // accumulates statistics for deceleration runs
     std::vector<int> accumulator_neu(rr_data.size(), 0); // accumulates statistics for neutral runs
     // rewind to the first good flag
-    while (annotations[running_rr_number] != 0)
+    while (annotations[running_rr_number] != 0 && running_rr_number < rr_data.size())
     {
         cout << "przejechalim" << endl;
         running_rr_number++;
     }
     running_rr_number++; // so that the initialization below can use -1
     // initializing the flags
-    cout << "pierwszy i drugi element: " << rr_data[running_rr_number - 1] << " "
+    cout << "pierwszy i drugi element rr: " << rr_data[running_rr_number - 1] << " "
          << rr_data[running_rr_number] << endl;
+    cout << "pierwszy i drugi element annot: " << annotations[running_rr_number - 1] << " "
+         << annotations[running_rr_number] << endl;
     if (rr_data[running_rr_number - 1] < rr_data[running_rr_number])
     {
         flag_dec = true;
@@ -248,8 +250,26 @@ vector<int> RRRuns::get_runs()
     cout << "lacznie mamy: " << current_address << " serii" << endl;
     cout << "dlugosc szeregu to: " << rr_data.size() << endl;
     cout << "running_rr_number wyszedl: " << running_rr_number << endl;
+    analyzed_ = true;
     /*for (int elem : accumulator_acc) {
         cout << elem << endl;
     }*/
-    return runs;
+}
+
+std::map<std::string, std::vector<int>> RRRuns::getFullRuns()
+{
+    if (!analyzed_)
+    {
+        analyzeRuns();
+    }
+    return this->full_runs;
+}
+
+std::vector<std::vector<int>> RRRuns::getAddresses()
+{
+    if (!analyzed_)
+    {
+        analyzeRuns();
+    }
+    return this->runs_addresses;
 }
