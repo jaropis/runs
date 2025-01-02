@@ -262,12 +262,3 @@ RunsAccumulator RRRuns::getFullRuns()
     }
     return this->accumulator;
 }
-
-std::vector<std::vector<int>> RRRuns::getAddresses()
-{
-    if (!analyzed_)
-    {
-        analyzeRuns();
-    }
-    return this->accumulator.runs_addresses;
-}

@@ -17,7 +17,6 @@ class RRRuns
 public:
     RRRuns(std::string path, bool write_last_run);
     std::vector<int> runs;
-    std::vector<std::vector<int>> getAddresses();
     RunsAccumulator getFullRuns();
 
 private:
