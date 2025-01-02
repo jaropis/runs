@@ -38,7 +38,7 @@ void RRRuns::print_addresses(int how_many, int max_length)
 
 void RRRuns::update_runs_addresses(vector<int> new_entry)
 {
-    accumulator.runs_addresses(new_entry);
+    this->accumulator.runs_addresses.push_back(new_entry);
 }
 
 void RRRuns::analyzeRuns()
