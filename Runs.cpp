@@ -4,35 +4,29 @@
 
 using namespace std;
 
-RRRuns::RRRuns(string path, bool write_last_run)
+RRRuns::RRRuns(std::vector<double> RR, std::vector<int> annot, bool write_last_run)
 {
-    ifstream rrfile;
-    rrfile.open(path);
-    if (!rrfile.is_open())
-    {
-        cout << "Error opening file " << path;
-    };
-    double current_rr;
-    int current_flag;
-    while (rrfile >> current_rr >> current_flag)
-    {
-        this->rr_data.push_back(current_rr);
-        this->annotations.push_back(current_flag);
-    }
+    this->rr_data = RR;
+    this->annotations = annot;
     this->write_last_run = write_last_run;
-    // declaring the accumulator
+    // declaring the accumulator -- all initialized to 0
     accumulator.dec.resize(rr_data.size());
     accumulator.acc.resize(rr_data.size());
     accumulator.neu.resize(rr_data.size());
 }
 
-void RRRuns::print_addresses(int how_many, int max_length)
+void RRRuns::print_addresses(int how_many, RunType runType, int runLength)
 {
-    how_many = (how_many > max_length) ? max_length : how_many;
     for (int j = 0; j < how_many; j++)
     {
-        cout << "dla j: " << j << endl;
-        cout << accumulator.runs_addresses[j][0] << " " << accumulator.runs_addresses[j][1] << " " << accumulator.runs_addresses[j][2] << endl;
+        if (accumulator.runs_addresses[j][2] == runType && accumulator.runs_addresses[j][1] == runLength)
+        {
+            for (int i = 0; i < accumulator.runs_addresses[j][1]; i++)
+            {
+                cout << rr_data[accumulator.runs_addresses[j][0] + i] << " ";
+            }
+            cout << "\n";
+        }
     }
 }
 
@@ -77,6 +71,7 @@ void RRRuns::analyzeRuns()
     }
     if (rr_data[running_rr_number - 1] == rr_data[running_rr_number])
     {
+        cout << "zaszlo!";
         flag_neu = true;
         index_neu++;
     }
@@ -134,7 +129,7 @@ void RRRuns::analyzeRuns()
                 if (flag_acc)
                 {
                     accumulator.acc[index_acc] += 1;
-                    update_runs_addresses({running_rr_number, index_acc, -1});
+                    update_runs_addresses({running_rr_number, index_acc, RunType::ACC});
                     current_address++;
                     running_rr_number++;
                     index_acc = 0;
@@ -144,7 +139,7 @@ void RRRuns::analyzeRuns()
                 if (flag_neu)
                 {
                     accumulator.neu[index_neu] += 1;
-                    update_runs_addresses({running_rr_number, index_neu, 0});
+                    update_runs_addresses({running_rr_number, index_neu, RunType::NEU});
                     current_address++;
                     running_rr_number++;
                     index_neu = 0;
@@ -166,7 +161,7 @@ void RRRuns::analyzeRuns()
                     if (flag_dec)
                     {
                         accumulator.dec[index_dec] += 1;
-                        update_runs_addresses({running_rr_number, index_dec, 1});
+                        update_runs_addresses({running_rr_number, index_dec, RunType::DEC});
                         current_address++;
                         running_rr_number++;
                         index_dec = 0;
@@ -176,7 +171,7 @@ void RRRuns::analyzeRuns()
                     if (flag_neu)
                     {
                         accumulator.neu[index_neu] += 1;
-                        update_runs_addresses({running_rr_number, index_neu, 0});
+                        update_runs_addresses({running_rr_number, index_neu, RunType::NEU});
                         current_address++;
                         running_rr_number++;
                         index_neu = 0;
@@ -199,7 +194,7 @@ void RRRuns::analyzeRuns()
                 {
 
                     accumulator.dec[index_dec] += 1;
-                    update_runs_addresses({running_rr_number, index_dec, 1});
+                    update_runs_addresses({running_rr_number, index_dec, RunType::DEC});
                     current_address++;
                     running_rr_number++;
                     index_dec = 0;
@@ -209,7 +204,7 @@ void RRRuns::analyzeRuns()
                 if (flag_acc)
                 {
                     accumulator.acc[index_acc] += 1;
-                    update_runs_addresses({running_rr_number, index_acc, -1});
+                    update_runs_addresses({running_rr_number, index_acc, RunType::ACC});
                     current_address++;
                     running_rr_number++;
                     index_acc = 0;
@@ -226,24 +221,23 @@ void RRRuns::analyzeRuns()
         if (index_acc > 0)
         {
             accumulator.acc[index_acc] += 1;
-            update_runs_addresses({running_rr_number, index_acc, -1});
+            update_runs_addresses({running_rr_number, index_acc, RunType::ACC});
         }
         if (index_dec > 0)
         {
             accumulator.dec[index_dec] += 1;
-            update_runs_addresses({running_rr_number, index_dec, 1});
+            update_runs_addresses({running_rr_number, index_dec, RunType::DEC});
         }
         if (index_neu > 0)
         {
             accumulator.neu[index_neu] += 1;
-            update_runs_addresses({running_rr_number, index_neu, 0});
+            update_runs_addresses({running_rr_number, index_neu, RunType::NEU});
         }
     }
     else
     {
         cout << "the last run not needed" << endl;
     }
-    print_addresses(10, current_address);
 
     cout << "lacznie mamy: " << current_address << " serii" << endl;
     cout << "dlugosc szeregu to: " << rr_data.size() << endl;
@@ -261,4 +255,31 @@ RunsAccumulator RRRuns::getFullRuns()
         analyzeRuns();
     }
     return this->accumulator;
+}
+
+void RRRuns::print_runs()
+{
+    if (!analyzed_)
+    {
+        analyzeRuns();
+    }
+    int accSize = 20; // accumulator.dec.size();
+    int decSize = 20; // accumulator.acc.size();
+    int maxLength = std::max(accSize, decSize);
+    cout << "i"
+         << " Ar "
+         << " - "
+         << "DR"
+         << " - "
+         << "N" << "\n";
+    for (int i = 1; i < maxLength; i++)
+    {
+        cout << i << " "
+             << (i < accSize ? accumulator.acc[i] : 0)
+             << " - "
+             << (i < decSize ? accumulator.dec[i] : 0)
+             << " - "
+             << (i < decSize ? accumulator.neu[i] : 0)
+             << "\n";
+    }
 }

@@ -4,6 +4,13 @@
 #include <vector>
 #include <map>
 
+enum RunType
+{
+    DEC = 1,
+    NEU = 0,
+    ACC = -1
+};
+
 struct RunsAccumulator
 {
     std::vector<int> dec;                         // accumulates statistics for acceleration runs
@@ -15,16 +22,17 @@ struct RunsAccumulator
 class RRRuns
 {
 public:
-    RRRuns(std::string path, bool write_last_run);
+    RRRuns(std::vector<double> RR, std::vector<int> annot, bool write_last_run);
     std::vector<int> runs;
     RunsAccumulator getFullRuns();
+    void print_runs();
+    void print_addresses(int how_many, RunType runType, int runLength);
 
 private:
     std::vector<double> rr_data;
     std::vector<int> annotations;
     bool write_last_run;
     void update_runs_addresses(std::vector<int> new_entry);
-    void print_addresses(int how_many, int max_length);
     RunsAccumulator accumulator;
     void analyzeRuns();
     bool analyzed_ = false;
