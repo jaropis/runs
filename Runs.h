@@ -1,40 +1,88 @@
+/**
+ * @file Runs.h
+ * @brief Header file defining the RRRuns class and related structures for processing RR intervals.
+ */
+
 #pragma once
 #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
 
+/**
+ * @enum RunType
+ * @brief Enumeration for different types of runs.
+ */
 enum RunType
 {
-    DEC = 1,
-    NEU = 0,
-    ACC = -1
+    DEC = 1, ///< Deceleration run
+    NEU = 0, ///< Neutral run
+    ACC = -1 ///< Acceleration run
 };
 
+/**
+ * @struct RunsAccumulator
+ * @brief Holds statistics and addresses for different types of runs.
+ */
 struct RunsAccumulator
 {
-    std::vector<int> dec;                         // accumulates statistics for acceleration runs
-    std::vector<int> acc;                         // accumulates statistics for deceleration runs
-    std::vector<int> neu;                         // accumulates statistics for neutral runs
-    std::vector<std::vector<int>> runs_addresses; // this holds addresses of decelerations - the first row contains the address of the end, the second the length of the run, and the third the type of run (-1 is acc, 0 is neutral, 1 is dec)
+    std::vector<int> dec;                         ///< Accumulates statistics for deceleration runs.
+    std::vector<int> acc;                         ///< Accumulates statistics for acceleration runs.
+    std::vector<int> neu;                         ///< Accumulates statistics for neutral runs.
+    std::vector<std::vector<int>> runs_addresses; ///< Stores addresses of runs: [end address, length, type].
 };
 
+/**
+ * @class RRRuns
+ * @brief Analyzes and accumulates statistics for RR interval runs.
+ */
 class RRRuns
 {
 public:
+    /**
+     * @brief Constructor for RRRuns.
+     * @param RR Vector of RR interval data.
+     * @param annot Vector of annotations corresponding to the RR data.
+     * @param write_last_run Flag to indicate whether to write the last run.
+     */
     RRRuns(std::vector<double> RR, std::vector<int> annot, bool write_last_run);
-    std::vector<int> runs;
+
+    /**
+     * @brief Retrieves the accumulated statistics for all runs.
+     * @return A RunsAccumulator object containing the statistics.
+     */
     RunsAccumulator getFullRuns();
+
+    /**
+     * @brief Prints the run statistics in a formatted manner.
+     */
     void print_runs();
+
+    /**
+     * @brief Prints addresses of runs based on type and length.
+     * @param runType Type of run to filter out (DEC, NEU, ACC).
+     * @param runLength Length of run to filter out.
+     * @param referenceBeat Whether to include the reference beat.
+     */
     void print_addresses(RunType runType, int runLength, bool referenceBeat);
 
 private:
-    std::vector<double> rr_data;
-    std::vector<int> annotations;
-    bool write_last_run;
+    std::vector<double> rr_data;  ///< Vector storing RR interval data.
+    std::vector<int> annotations; ///< Vector storing annotations corresponding to RR data.
+    bool write_last_run;          ///< Flag to indicate whether to write the last run.
+
+    RunsAccumulator accumulator; ///< Accumulator object for storing run statistics.
+
+    /**
+     * @brief Updates the run addresses in the accumulator.
+     * @param new_entry A vector containing [end address, length, type].
+     */
     void update_runs_addresses(std::vector<int> new_entry);
-    RunsAccumulator accumulator;
+
+    /**
+     * @brief Analyzes the RR intervals and updates run statistics.
+     */
     void analyzeRuns();
-    bool analyzed_ = false;
-    // vector<int> rollup_runs(int accumulator_dec[], int accumulator_acc[], int accumulator_neu[]);
+
+    bool analyzed_ = false; ///< Flag to indicate whether the data has been analyzed.
 };
