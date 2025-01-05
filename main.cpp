@@ -37,5 +37,5 @@ int main(void)
     RRRuns RR(RRSeries.RR, RRSeries.annot, false);
     RR.getFullRuns();
     RR.print_runs();
-    RR.print_addresses(RRSeries.size, RunType::NEU, 2);
+    RR.print_addresses(RunType::NEU, 2, false);
 }

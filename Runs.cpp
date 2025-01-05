@@ -15,13 +15,16 @@ RRRuns::RRRuns(std::vector<double> RR, std::vector<int> annot, bool write_last_r
     accumulator.neu.resize(rr_data.size());
 }
 
-void RRRuns::print_addresses(int how_many, RunType runType, int runLength)
+void RRRuns::print_addresses(RunType runType, int runLength, bool referenceBeat)
 {
-    for (int j = 0; j < how_many; j++)
+    int referenceOffset = referenceBeat ? 1 : 0;
+    cout << "accumulator.runs_addresses.size: " << accumulator.runs_addresses.size() << "\n";
+    for (int j = 0; j < accumulator.runs_addresses.size(); j++)
     {
         if (accumulator.runs_addresses[j][2] == runType && accumulator.runs_addresses[j][1] == runLength)
         {
-            for (int i = 0; i < accumulator.runs_addresses[j][1]; i++)
+            // remembering that the runs address is the address of the last beat belonging to a run
+            for (int i = -(accumulator.runs_addresses[j][1] + referenceOffset); i < 0; i++) // + 1, because we want also to see the reference beat
             {
                 cout << rr_data[accumulator.runs_addresses[j][0] + i] << " ";
             }

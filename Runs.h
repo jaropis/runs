@@ -26,7 +26,7 @@ public:
     std::vector<int> runs;
     RunsAccumulator getFullRuns();
     void print_runs();
-    void print_addresses(int how_many, RunType runType, int runLength);
+    void print_addresses(RunType runType, int runLength, bool referenceBeat);
 
 private:
     std::vector<double> rr_data;
