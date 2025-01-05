@@ -4,11 +4,8 @@
 
 using namespace std;
 
-RRRuns::RRRuns(std::vector<double> RR, std::vector<int> annot, bool writeLastRun)
+RRRuns::RRRuns(std::vector<double> RR, std::vector<int> annot, bool writeLastRun) : rrData(std::move(RR)), annotations(std::move(annot)), writeLastRun(writeLastRun)
 {
-    this->rrData = RR;
-    this->annotations = annot;
-    this->writeLastRun = writeLastRun;
     // declaring the accumulator -- all initialized to 0
     accumulator.dec.resize(rrData.size());
     accumulator.acc.resize(rrData.size());
@@ -17,6 +14,10 @@ RRRuns::RRRuns(std::vector<double> RR, std::vector<int> annot, bool writeLastRun
 
 void RRRuns::printAddresses(RunType runType, int runLength, bool referenceBeat)
 {
+    if (!analyzed_)
+    {
+        analyzeRuns();
+    }
     int referenceOffset = referenceBeat ? 1 : 0;
     cout << "accumulator.runs_addresses.size: " << accumulator.runs_addresses.size() << "\n";
     for (int j = 0; j < accumulator.runs_addresses.size(); j++)
@@ -40,77 +41,77 @@ void RRRuns::updateRunsAddresses(vector<int> new_entry)
 
 void RRRuns::analyzeRuns()
 {
-    bool flag_dec = false;
-    bool flag_acc = false;
-    bool flag_neu = false;
-    int index_dec = 0;
-    int index_acc = 0;
-    int index_neu = 0;
-    int run_counter = 0;
-    int running_rr_number = 0;
-    int current_address = 0; // holds the address in runs_addresses array, adds consecutive runs
+    bool flagDec = false;
+    bool flagAcc = false;
+    bool flagNeu = false;
+    int indexDec = 0;
+    int indexAcc = 0;
+    int indexNeu = 0;
+    int runCounter = 0;
+    int runningRRNumber = 0;
+    int currentAddress = 0; // holds the address in runs_addresses array, adds consecutive runs
 
     // rewind to the first good flag
-    while (annotations[running_rr_number] != 0 && running_rr_number < rrData.size())
+    while (annotations[runningRRNumber] != 0 && runningRRNumber < rrData.size())
     {
         cout << "przejechalim" << endl;
-        running_rr_number++;
+        runningRRNumber++;
     }
-    running_rr_number++; // so that the initialization below can use -1
+    runningRRNumber++; // so that the initialization below can use -1
     // initializing the flags
-    cout << "pierwszy i drugi element rr: " << rrData[running_rr_number - 1] << " "
-         << rrData[running_rr_number] << endl;
-    cout << "pierwszy i drugi element annot: " << annotations[running_rr_number - 1] << " "
-         << annotations[running_rr_number] << endl;
-    if (rrData[running_rr_number - 1] < rrData[running_rr_number])
+    cout << "pierwszy i drugi element rr: " << rrData[runningRRNumber - 1] << " "
+         << rrData[runningRRNumber] << endl;
+    cout << "pierwszy i drugi element annot: " << annotations[runningRRNumber - 1] << " "
+         << annotations[runningRRNumber] << endl;
+    if (rrData[runningRRNumber - 1] < rrData[runningRRNumber])
     {
-        flag_dec = true;
-        index_dec++;
+        flagDec = true;
+        indexDec++;
     }
-    if (rrData[running_rr_number - 1] > rrData[running_rr_number])
+    if (rrData[runningRRNumber - 1] > rrData[runningRRNumber])
     {
-        flag_acc = true;
-        index_acc++;
+        flagAcc = true;
+        indexAcc++;
     }
-    if (rrData[running_rr_number - 1] == rrData[running_rr_number])
+    if (rrData[runningRRNumber - 1] == rrData[runningRRNumber])
     {
         cout << "zaszlo!";
-        flag_neu = true;
-        index_neu++;
+        flagNeu = true;
+        indexNeu++;
     }
 
-    for (int i = running_rr_number; i < rrData.size(); i++)
+    for (int i = runningRRNumber; i < rrData.size(); i++)
     {
-        // update running_rr_number (we start from +2 above)
+        // update runningRRNumber (we start from +2 above)
 
         // what happens if annotation is not 0? We reset the flags and re-initiate the calculations
         if (annotations[i - 1] != 0)
         {
-            index_dec = 0;
-            index_acc = 0;
-            index_neu = 0;
+            indexDec = 0;
+            indexAcc = 0;
+            indexNeu = 0;
             // rewind to the first good rr_(n-1)
-            while (annotations[running_rr_number - 1] != 0)
+            while (annotations[runningRRNumber - 1] != 0)
             {
                 cout << "przejechalim" << endl;
-                running_rr_number++;
+                runningRRNumber++;
                 i++;
             }
             // reinitializing the flags
-            if (rrData[running_rr_number - 1] < rrData[running_rr_number])
+            if (rrData[runningRRNumber - 1] < rrData[runningRRNumber])
             {
-                flag_dec = true;
-                index_dec++;
+                flagDec = true;
+                indexDec++;
             }
-            if (rrData[running_rr_number - 1] > rrData[running_rr_number])
+            if (rrData[runningRRNumber - 1] > rrData[runningRRNumber])
             {
-                flag_acc = true;
-                index_acc++;
+                flagAcc = true;
+                indexAcc++;
             }
-            if (rrData[running_rr_number - 1] == rrData[running_rr_number])
+            if (rrData[runningRRNumber - 1] == rrData[runningRRNumber])
             {
-                flag_neu = true;
-                index_neu++;
+                flagNeu = true;
+                indexNeu++;
             }
             continue; // and leave the main loop
         }
@@ -122,97 +123,97 @@ void RRRuns::analyzeRuns()
 
         if (rrData[i - 1] < rrData[i])
         {
-            index_dec++;
-            if (flag_dec)
+            indexDec++;
+            if (flagDec)
             {
-                running_rr_number++;
+                runningRRNumber++;
             }
             else
             {
-                if (flag_acc)
+                if (flagAcc)
                 {
-                    accumulator.acc[index_acc] += 1;
-                    updateRunsAddresses({running_rr_number, index_acc, RunType::ACC});
-                    current_address++;
-                    running_rr_number++;
-                    index_acc = 0;
-                    flag_acc = false;
-                    flag_dec = true;
+                    accumulator.acc[indexAcc] += 1;
+                    updateRunsAddresses({runningRRNumber, indexAcc, RunType::ACC});
+                    currentAddress++;
+                    runningRRNumber++;
+                    indexAcc = 0;
+                    flagAcc = false;
+                    flagDec = true;
                 }
-                if (flag_neu)
+                if (flagNeu)
                 {
-                    accumulator.neu[index_neu] += 1;
-                    updateRunsAddresses({running_rr_number, index_neu, RunType::NEU});
-                    current_address++;
-                    running_rr_number++;
-                    index_neu = 0;
-                    flag_neu = false;
-                    flag_dec = true;
+                    accumulator.neu[indexNeu] += 1;
+                    updateRunsAddresses({runningRRNumber, indexNeu, RunType::NEU});
+                    currentAddress++;
+                    runningRRNumber++;
+                    indexNeu = 0;
+                    flagNeu = false;
+                    flagDec = true;
                 }
             }
         }
         if (rrData[i - 1] > rrData[i])
         {
             {
-                index_acc++;
-                if (flag_acc)
+                indexAcc++;
+                if (flagAcc)
                 {
-                    running_rr_number++;
+                    runningRRNumber++;
                 }
                 else
                 {
-                    if (flag_dec)
+                    if (flagDec)
                     {
-                        accumulator.dec[index_dec] += 1;
-                        updateRunsAddresses({running_rr_number, index_dec, RunType::DEC});
-                        current_address++;
-                        running_rr_number++;
-                        index_dec = 0;
-                        flag_dec = false;
-                        flag_acc = true;
+                        accumulator.dec[indexDec] += 1;
+                        updateRunsAddresses({runningRRNumber, indexDec, RunType::DEC});
+                        currentAddress++;
+                        runningRRNumber++;
+                        indexDec = 0;
+                        flagDec = false;
+                        flagAcc = true;
                     }
-                    if (flag_neu)
+                    if (flagNeu)
                     {
-                        accumulator.neu[index_neu] += 1;
-                        updateRunsAddresses({running_rr_number, index_neu, RunType::NEU});
-                        current_address++;
-                        running_rr_number++;
-                        index_neu = 0;
-                        flag_neu = false;
-                        flag_acc = true;
+                        accumulator.neu[indexNeu] += 1;
+                        updateRunsAddresses({runningRRNumber, indexNeu, RunType::NEU});
+                        currentAddress++;
+                        runningRRNumber++;
+                        indexNeu = 0;
+                        flagNeu = false;
+                        flagAcc = true;
                     }
                 }
             }
         }
         if (rrData[i - 1] == rrData[i])
         {
-            index_neu++;
-            if (flag_neu)
+            indexNeu++;
+            if (flagNeu)
             {
-                running_rr_number++;
+                runningRRNumber++;
             }
             else
             {
-                if (flag_dec)
+                if (flagDec)
                 {
 
-                    accumulator.dec[index_dec] += 1;
-                    updateRunsAddresses({running_rr_number, index_dec, RunType::DEC});
-                    current_address++;
-                    running_rr_number++;
-                    index_dec = 0;
-                    flag_dec = false;
-                    flag_neu = true;
+                    accumulator.dec[indexDec] += 1;
+                    updateRunsAddresses({runningRRNumber, indexDec, RunType::DEC});
+                    currentAddress++;
+                    runningRRNumber++;
+                    indexDec = 0;
+                    flagDec = false;
+                    flagNeu = true;
                 }
-                if (flag_acc)
+                if (flagAcc)
                 {
-                    accumulator.acc[index_acc] += 1;
-                    updateRunsAddresses({running_rr_number, index_acc, RunType::ACC});
-                    current_address++;
-                    running_rr_number++;
-                    index_acc = 0;
-                    flag_acc = false;
-                    flag_neu = true;
+                    accumulator.acc[indexAcc] += 1;
+                    updateRunsAddresses({runningRRNumber, indexAcc, RunType::ACC});
+                    currentAddress++;
+                    runningRRNumber++;
+                    indexAcc = 0;
+                    flagAcc = false;
+                    flagNeu = true;
                 }
             }
         }
@@ -221,20 +222,20 @@ void RRRuns::analyzeRuns()
     // writing the last run
     if (this->writeLastRun)
     {
-        if (index_acc > 0)
+        if (indexAcc > 0)
         {
-            accumulator.acc[index_acc] += 1;
-            updateRunsAddresses({running_rr_number, index_acc, RunType::ACC});
+            accumulator.acc[indexAcc] += 1;
+            updateRunsAddresses({runningRRNumber, indexAcc, RunType::ACC});
         }
-        if (index_dec > 0)
+        if (indexDec > 0)
         {
-            accumulator.dec[index_dec] += 1;
-            updateRunsAddresses({running_rr_number, index_dec, RunType::DEC});
+            accumulator.dec[indexDec] += 1;
+            updateRunsAddresses({runningRRNumber, indexDec, RunType::DEC});
         }
-        if (index_neu > 0)
+        if (indexNeu > 0)
         {
-            accumulator.neu[index_neu] += 1;
-            updateRunsAddresses({running_rr_number, index_neu, RunType::NEU});
+            accumulator.neu[indexNeu] += 1;
+            updateRunsAddresses({runningRRNumber, indexNeu, RunType::NEU});
         }
     }
     else
@@ -242,9 +243,9 @@ void RRRuns::analyzeRuns()
         cout << "the last run not needed" << endl;
     }
 
-    cout << "lacznie mamy: " << current_address << " serii" << endl;
+    cout << "lacznie mamy: " << currentAddress << " serii" << endl;
     cout << "dlugosc szeregu to: " << rrData.size() << endl;
-    cout << "running_rr_number wyszedl: " << running_rr_number << endl;
+    cout << "runningRRNumber wyszedl: " << runningRRNumber << endl;
     analyzed_ = true;
     /*for (int elem : accumulator.acc) {
         cout << elem << endl;
