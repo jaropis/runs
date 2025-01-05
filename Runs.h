@@ -67,9 +67,9 @@ public:
     void printAddresses(RunType runType, int runLength, bool referenceBeat);
 
 private:
-    std::vector<double> rrData;   ///< Vector storing RR interval data.
-    std::vector<int> annotations; ///< Vector storing annotations corresponding to RR data.
-    bool writeLastRun;            ///< Flag to indicate whether to write the last run.
+    std::vector<double> rrIntervals; ///< Vector storing RR interval data.
+    std::vector<int> annotations;    ///< Vector storing annotations corresponding to RR data.
+    bool writeLastRun;               ///< Flag to indicate whether to write the last run.
 
     RunsAccumulator accumulator; ///< Accumulator object for storing run statistics.
 

@@ -4,12 +4,12 @@
 
 using namespace std;
 
-RRRuns::RRRuns(std::vector<double> RR, std::vector<int> annot, bool writeLastRun) : rrData(std::move(RR)), annotations(std::move(annot)), writeLastRun(writeLastRun)
+RRRuns::RRRuns(std::vector<double> RR, std::vector<int> annot, bool writeLastRun) : rrIntervals(std::move(RR)), annotations(std::move(annot)), writeLastRun(writeLastRun)
 {
     // declaring the accumulator -- all initialized to 0
-    accumulator.dec.resize(rrData.size());
-    accumulator.acc.resize(rrData.size());
-    accumulator.neu.resize(rrData.size());
+    accumulator.dec.resize(rrIntervals.size());
+    accumulator.acc.resize(rrIntervals.size());
+    accumulator.neu.resize(rrIntervals.size());
 }
 
 void RRRuns::printAddresses(RunType runType, int runLength, bool referenceBeat)
@@ -27,7 +27,7 @@ void RRRuns::printAddresses(RunType runType, int runLength, bool referenceBeat)
             // remembering that the runs address is the address of the last beat belonging to a run
             for (int i = -(accumulator.runs_addresses[j][1] + referenceOffset); i < 0; i++) // + 1, because we want also to see the reference beat
             {
-                cout << rrData[accumulator.runs_addresses[j][0] + i] << " ";
+                cout << rrIntervals[accumulator.runs_addresses[j][0] + i] << " ";
             }
             cout << "\n";
         }
@@ -52,35 +52,35 @@ void RRRuns::analyzeRuns()
     int currentAddress = 0; // holds the address in runs_addresses array, adds consecutive runs
 
     // rewind to the first good flag
-    while (annotations[runningRRNumber] != 0 && runningRRNumber < rrData.size())
+    while (annotations[runningRRNumber] != 0 && runningRRNumber < rrIntervals.size())
     {
         cout << "przejechalim" << endl;
         runningRRNumber++;
     }
     runningRRNumber++; // so that the initialization below can use -1
     // initializing the flags
-    cout << "pierwszy i drugi element rr: " << rrData[runningRRNumber - 1] << " "
-         << rrData[runningRRNumber] << endl;
+    cout << "pierwszy i drugi element rr: " << rrIntervals[runningRRNumber - 1] << " "
+         << rrIntervals[runningRRNumber] << endl;
     cout << "pierwszy i drugi element annot: " << annotations[runningRRNumber - 1] << " "
          << annotations[runningRRNumber] << endl;
-    if (rrData[runningRRNumber - 1] < rrData[runningRRNumber])
+    if (rrIntervals[runningRRNumber - 1] < rrIntervals[runningRRNumber])
     {
         flagDec = true;
         indexDec++;
     }
-    if (rrData[runningRRNumber - 1] > rrData[runningRRNumber])
+    if (rrIntervals[runningRRNumber - 1] > rrIntervals[runningRRNumber])
     {
         flagAcc = true;
         indexAcc++;
     }
-    if (rrData[runningRRNumber - 1] == rrData[runningRRNumber])
+    if (rrIntervals[runningRRNumber - 1] == rrIntervals[runningRRNumber])
     {
         cout << "zaszlo!";
         flagNeu = true;
         indexNeu++;
     }
 
-    for (int i = runningRRNumber; i < rrData.size(); i++)
+    for (int i = runningRRNumber; i < rrIntervals.size(); i++)
     {
         // update runningRRNumber (we start from +2 above)
 
@@ -98,17 +98,17 @@ void RRRuns::analyzeRuns()
                 i++;
             }
             // reinitializing the flags
-            if (rrData[runningRRNumber - 1] < rrData[runningRRNumber])
+            if (rrIntervals[runningRRNumber - 1] < rrIntervals[runningRRNumber])
             {
                 flagDec = true;
                 indexDec++;
             }
-            if (rrData[runningRRNumber - 1] > rrData[runningRRNumber])
+            if (rrIntervals[runningRRNumber - 1] > rrIntervals[runningRRNumber])
             {
                 flagAcc = true;
                 indexAcc++;
             }
-            if (rrData[runningRRNumber - 1] == rrData[runningRRNumber])
+            if (rrIntervals[runningRRNumber - 1] == rrIntervals[runningRRNumber])
             {
                 flagNeu = true;
                 indexNeu++;
@@ -116,12 +116,12 @@ void RRRuns::analyzeRuns()
             continue; // and leave the main loop
         }
         // if as a result of skipping over non sinus beats we are over the length of the rr intervals time series, break out of the loop
-        if (i >= rrData.size())
+        if (i >= rrIntervals.size())
         {
             break;
         }
 
-        if (rrData[i - 1] < rrData[i])
+        if (rrIntervals[i - 1] < rrIntervals[i])
         {
             indexDec++;
             if (flagDec)
@@ -152,7 +152,7 @@ void RRRuns::analyzeRuns()
                 }
             }
         }
-        if (rrData[i - 1] > rrData[i])
+        if (rrIntervals[i - 1] > rrIntervals[i])
         {
             {
                 indexAcc++;
@@ -185,7 +185,7 @@ void RRRuns::analyzeRuns()
                 }
             }
         }
-        if (rrData[i - 1] == rrData[i])
+        if (rrIntervals[i - 1] == rrIntervals[i])
         {
             indexNeu++;
             if (flagNeu)
@@ -244,7 +244,7 @@ void RRRuns::analyzeRuns()
     }
 
     cout << "lacznie mamy: " << currentAddress << " serii" << endl;
-    cout << "dlugosc szeregu to: " << rrData.size() << endl;
+    cout << "dlugosc szeregu to: " << rrIntervals.size() << endl;
     cout << "runningRRNumber wyszedl: " << runningRRNumber << endl;
     analyzed_ = true;
     /*for (int elem : accumulator.acc) {
