@@ -20,12 +20,12 @@ RRseries readRR(std::string path)
     {
         std::cout << "Error opening file " << path;
     };
-    double current_rr;
-    int current_flag;
-    while (rrfile >> current_rr >> current_flag)
+    double currentRR;
+    int currentFlag;
+    while (rrfile >> currentRR >> currentFlag)
     {
-        result.RR.push_back(current_rr);
-        result.annot.push_back(current_flag);
+        result.RR.push_back(currentRR);
+        result.annot.push_back(currentFlag);
     }
     result.size = result.RR.size();
     return result;
@@ -36,6 +36,6 @@ int main(void)
     RRseries RRSeries = readRR("adamek.csv");
     RRRuns RR(RRSeries.RR, RRSeries.annot, false);
     RR.getFullRuns();
-    RR.print_runs();
-    RR.print_addresses(RunType::NEU, 2, false);
+    RR.printRuns();
+    RR.printAddresses(RunType::NEU, 2, false);
 }

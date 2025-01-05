@@ -43,9 +43,9 @@ public:
      * @brief Constructor for RRRuns.
      * @param RR Vector of RR interval data.
      * @param annot Vector of annotations corresponding to the RR data.
-     * @param write_last_run Flag to indicate whether to write the last run.
+     * @param writeLastRun Flag to indicate whether to write the last run.
      */
-    RRRuns(std::vector<double> RR, std::vector<int> annot, bool write_last_run);
+    RRRuns(std::vector<double> RR, std::vector<int> annot, bool writeLastRun);
 
     /**
      * @brief Retrieves the accumulated statistics for all runs.
@@ -56,7 +56,7 @@ public:
     /**
      * @brief Prints the run statistics in a formatted manner.
      */
-    void print_runs();
+    void printRuns();
 
     /**
      * @brief Prints addresses of runs based on type and length.
@@ -64,12 +64,12 @@ public:
      * @param runLength Length of run to filter out.
      * @param referenceBeat Whether to include the reference beat.
      */
-    void print_addresses(RunType runType, int runLength, bool referenceBeat);
+    void printAddresses(RunType runType, int runLength, bool referenceBeat);
 
 private:
-    std::vector<double> rr_data;  ///< Vector storing RR interval data.
+    std::vector<double> rrData;   ///< Vector storing RR interval data.
     std::vector<int> annotations; ///< Vector storing annotations corresponding to RR data.
-    bool write_last_run;          ///< Flag to indicate whether to write the last run.
+    bool writeLastRun;            ///< Flag to indicate whether to write the last run.
 
     RunsAccumulator accumulator; ///< Accumulator object for storing run statistics.
 
@@ -77,7 +77,7 @@ private:
      * @brief Updates the run addresses in the accumulator.
      * @param new_entry A vector containing [end address, length, type].
      */
-    void update_runs_addresses(std::vector<int> new_entry);
+    void updateRunsAddresses(std::vector<int> new_entry);
 
     /**
      * @brief Analyzes the RR intervals and updates run statistics.
