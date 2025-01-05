@@ -49,20 +49,15 @@ void RRRuns::analyzeRuns()
     int indexNeu = 0;
     int runCounter = 0;
     int runningRRNumber = 0;
-    int currentAddress = 0; // holds the address in runs_addresses array, adds consecutive runs
+    int currentAddress = 0; ///> holds the address in runs_addresses array, adds consecutive runs
 
-    // rewind to the first good flag
+    /// rewind to the first good flag
     while (annotations[runningRRNumber] != 0 && runningRRNumber < rrIntervals.size())
     {
-        cout << "przejechalim" << endl;
         runningRRNumber++;
     }
-    runningRRNumber++; // so that the initialization below can use -1
-    // initializing the flags
-    cout << "pierwszy i drugi element rr: " << rrIntervals[runningRRNumber - 1] << " "
-         << rrIntervals[runningRRNumber] << endl;
-    cout << "pierwszy i drugi element annot: " << annotations[runningRRNumber - 1] << " "
-         << annotations[runningRRNumber] << endl;
+    // /initializing the flags
+    runningRRNumber++; ///> only for stylistic reasons: so that I can use runningRRNumber - 1 below
     if (rrIntervals[runningRRNumber - 1] < rrIntervals[runningRRNumber])
     {
         flagDec = true;
@@ -75,12 +70,11 @@ void RRRuns::analyzeRuns()
     }
     if (rrIntervals[runningRRNumber - 1] == rrIntervals[runningRRNumber])
     {
-        cout << "zaszlo!";
         flagNeu = true;
         indexNeu++;
     }
 
-    for (int i = runningRRNumber; i < rrIntervals.size(); i++)
+    for (int i = runningRRNumber + 2; i < rrIntervals.size(); i++) // + 2, in order to be able to use runningRRNumber - 1 later
     {
         // update runningRRNumber (we start from +2 above)
 
@@ -93,7 +87,6 @@ void RRRuns::analyzeRuns()
             // rewind to the first good rr_(n-1)
             while (annotations[runningRRNumber - 1] != 0)
             {
-                cout << "przejechalim" << endl;
                 runningRRNumber++;
                 i++;
             }
