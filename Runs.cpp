@@ -73,14 +73,29 @@ void RRRuns::analyzeRuns()
         flagNeu = true;
         indexNeu++;
     }
+    cout
+        << "after beginning"
+        << " flagAcc " << flagAcc << " "
+        << " flagDec " << flagDec << " "
+        << " flagNeu " << flagNeu << " beat index: "
+        << runningRRNumber
+        << " values: "
+        << rrIntervals[runningRRNumber - 1] << " " << rrIntervals[runningRRNumber] << endl;
 
-    for (int i = runningRRNumber + 2; i < rrIntervals.size(); i++) // + 2, in order to be able to use runningRRNumber - 1 later
+    runningRRNumber++;
+    for (int i = runningRRNumber + 1; i < rrIntervals.size(); i++) // + 2, in order to be able to use runningRRNumber - 1 later
     {
         // update runningRRNumber (we start from +2 above)
 
         // what happens if annotation is not 0? We reset the flags and re-initiate the calculations
         if (annotations[i - 1] != 0)
         {
+            cout
+                << "am inside reset"
+                << " beat index: "
+                << runningRRNumber
+                << endl;
+
             indexDec = 0;
             indexAcc = 0;
             indexNeu = 0;
@@ -116,6 +131,13 @@ void RRRuns::analyzeRuns()
 
         if (rrIntervals[i - 1] < rrIntervals[i])
         {
+            cout
+                << "am inside deceleration"
+                << " beat index: "
+                << runningRRNumber
+                << " values: "
+                << rrIntervals[i - 1] << " " << rrIntervals[i]
+                << endl;
             indexDec++;
             if (flagDec)
             {
@@ -147,6 +169,13 @@ void RRRuns::analyzeRuns()
         }
         if (rrIntervals[i - 1] > rrIntervals[i])
         {
+            cout
+                << "am inside accceleration"
+                << " beat index: "
+                << runningRRNumber
+                << " values: "
+                << rrIntervals[i - 1] << " " << rrIntervals[i]
+                << endl;
             {
                 indexAcc++;
                 if (flagAcc)
@@ -180,6 +209,7 @@ void RRRuns::analyzeRuns()
         }
         if (rrIntervals[i - 1] == rrIntervals[i])
         {
+            cout << "am inside neutral" << " beat index: " << runningRRNumber << endl;
             indexNeu++;
             if (flagNeu)
             {
@@ -260,8 +290,8 @@ void RRRuns::printRuns()
     {
         analyzeRuns();
     }
-    int accSize = 20; // accumulator.dec.size();
-    int decSize = 20; // accumulator.acc.size();
+    int accSize = accumulator.dec.size();
+    int decSize = accumulator.acc.size();
     int maxLength = std::max(accSize, decSize);
     cout << "i"
          << " Ar "
