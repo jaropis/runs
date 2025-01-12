@@ -72,7 +72,7 @@ private:
     bool writeLastRun;               ///< Flag to indicate whether to write the last run.
 
     RunsAccumulator accumulator; ///< Accumulator object for storing run statistics.
-
+    int getNonzeroLength(std::vector<int> vec);
     /**
      * @brief Updates the run addresses in the accumulator.
      * @param new_entry A vector containing [end address, length, type].

@@ -258,8 +258,8 @@ void RRRuns::printRuns()
     {
         analyzeRuns();
     }
-    int accSize = accumulator.dec.size();
-    int decSize = accumulator.acc.size();
+    int decSize = getNonzeroLength(accumulator.dec);
+    int accSize = getNonzeroLength(accumulator.acc);
     int maxLength = std::max(accSize, decSize);
     cout << "i"
          << " Ar "
@@ -267,8 +267,7 @@ void RRRuns::printRuns()
          << "DR"
          << " - "
          << "N" << "\n";
-    cout << "maxLength" << maxLength << "\n";
-    for (int i = 1; i < 15; i++)
+    for (int i = 1; i < maxLength; i++)
     {
         cout << i << " "
              << (i < accSize ? accumulator.acc[i] : 0)
@@ -278,4 +277,18 @@ void RRRuns::printRuns()
              << (i < decSize ? accumulator.neu[i] : 0)
              << "\n";
     }
+}
+
+int RRRuns::getNonzeroLength(vector<int> vec)
+{
+    int counter = vec.size();
+    int i;
+    for (i = counter; i > 0; i--)
+    {
+        if (vec[i] != 0)
+        {
+            break;
+        }
+    }
+    return i + 1; // because we actually index from 1
 }
