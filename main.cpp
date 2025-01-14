@@ -33,9 +33,15 @@ RRseries readRR(std::string path)
 
 int main(void)
 {
-    RRseries RRSeries = readRR("adamek.csv");
-    RRRuns RR(RRSeries.RR, RRSeries.annot, true);
-    RR.getFullRuns();
+    // RRseries RRSeries = readRR("adamek.csv");
+    // RRRuns RR(RRSeries.RR, RRSeries.annot, true);
+    // RR.getFullRuns();
+    // RR.printRuns();
+    // RR.printAddresses(RunType::NEU, 2, false);
+    std::vector<double> RR1 = {1.0, 2.0, 3.0, 0.0, 1.0, 2.0, 3.0, 0.0};
+    std::vector<int> annot1 = {0, 0, 1, 0, 0, 1, 0, 0};
+    RRRuns RR(RR1, annot1, true);
     RR.printRuns();
-    RR.printAddresses(RunType::NEU, 2, false);
+    RR.printAddresses(RunType::DEC, 1, true);
+    RR.printAddresses(RunType::ACC, 1, true);
 }

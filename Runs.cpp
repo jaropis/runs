@@ -13,6 +13,7 @@ RRRuns::RRRuns(std::vector<double> RR, std::vector<int> annot, bool writeLastRun
 
 void RRRuns::printAddresses(RunType runType, int runLength, bool referenceBeat)
 {
+    cout << "run type: " << (runType > 0 ? "DEC" : "ACC") << " run length: " << runLength << endl;
     if (!analyzed_)
     {
         analyzeRuns();
@@ -233,10 +234,6 @@ void RRRuns::analyzeRuns()
     {
         cout << "the last run not needed" << endl;
     }
-
-    cout << "lacznie mamy: " << currentAddress << " serii" << endl;
-    cout << "dlugosc szeregu to: " << rrIntervals.size() << endl;
-    cout << "runningRRNumber wyszedl: " << runningRRNumber << endl;
     analyzed_ = true;
     /*for (int elem : accumulator.acc) {
         cout << elem << endl;
